@@ -70,8 +70,6 @@ func Start() error {
 				return err
 			}
 
-			fmt.Println(cfg)
-
 			if ctx.IsSet(PreReleaseFlag) {
 				cfg.PreRelease = ctx.String(PreReleaseFlag)
 			}
