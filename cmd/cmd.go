@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	Version     = "0.0.1"
+	Version     = "0.1.1"
 	Description = "RelGen is a command-line tool that helps you automate version bumps and changelog creation for any of your projects by using Conventional Commits and your Git history."
 )
 

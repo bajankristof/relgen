@@ -147,6 +147,14 @@ func (vsn *Version) WithReference(reference *plumbing.Reference) *Version {
 	return vsn
 }
 
+func (vsn *Version) IsReference(hash plumbing.Hash) bool {
+	if vsn.reference == nil {
+		return false
+	}
+
+	return vsn.reference.Hash() == hash
+}
+
 func (vsn *Version) Prefix() bool {
 	return vsn.prefix
 }

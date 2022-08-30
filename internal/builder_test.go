@@ -91,9 +91,9 @@ func TestReleaseBuilder_BuildTagsError(t *testing.T) {
 func TestReleaseBuilder_BuildSince(t *testing.T) {
 	repo := &mocking.MockRepository{
 		LogReturn: &mocking.MockCommitIter{Commits: []*object.Commit{
-			{Message: "looks : almost good"},
-			{Message: "test: nice and conventional"},
-			{Message: "foo: conventional without purpose"},
+			{Message: "looks : almost good", Hash: plumbing.NewHash("123"), ParentHashes: []plumbing.Hash{}},
+			{Message: "test: nice and conventional", Hash: plumbing.NewHash("456"), ParentHashes: []plumbing.Hash{}},
+			{Message: "foo: conventional without purpose", Hash: plumbing.NewHash("789"), ParentHashes: []plumbing.Hash{}},
 		}},
 	}
 

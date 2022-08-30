@@ -259,6 +259,25 @@ func TestVersion_WithReference(t *testing.T) {
 	}
 }
 
+func TestVersion_IsReference(t *testing.T) {
+	hash := plumbing.NewHash("123")
+	ref := plumbing.NewHashReference("foo", hash)
+	vsn := NewEmptyVersion()
+
+	if vsn.IsReference(hash) {
+		t.Fatalf(`(*Version(%v)).IsReference(%v), expected false, got true`, vsn, hash)
+	}
+
+	if !vsn.WithReference(ref).IsReference(ref.Hash()) {
+		t.Fatalf(`(*Version(%v)).IsReference(%v), expected true, got false`, vsn, ref.Hash())
+	}
+
+	other := plumbing.NewHash("456")
+	if vsn.IsReference(other) {
+		t.Fatalf(`(*Version(%v)).IsReference(%v), expected false, got true`, vsn, other)
+	}
+}
+
 func TestVersion_Prefix(t *testing.T) {
 	vsn := NewEmptyVersion()
 	vsn.prefix = true
