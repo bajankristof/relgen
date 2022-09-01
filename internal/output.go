@@ -16,7 +16,7 @@ var DefaultChangelogOutput = &OutputWriter{
 	Path: "changelog-entry.md",
 	Template: template.Must(template.New("changelog-entry.md").Parse(`## {{.Version | print}} ({{.Date.Format "2006-01-02"}}){{range $category, $changes := .Changelog}}
 ### {{$category}}{{range $cc := $changes}}
-* {{$cc.Description}}{{end}}
+* {{$cc.Description}} (#{{printf "%.*s" 8 $cc.Hash}}){{end}}
 {{end}}`)),
 }
 

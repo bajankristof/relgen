@@ -100,6 +100,10 @@ func Start() error {
 			output, _ := json.Marshal(rel)
 			fmt.Println(string(output))
 
+			if ctx.Bool(DryRunFlag) {
+				return nil
+			}
+
 			return cfg.Outputs.Execute(rel)
 		},
 	}
