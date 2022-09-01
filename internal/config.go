@@ -37,7 +37,7 @@ type TypeSpec struct {
 func ReadConfig(path string) (*Config, error) {
 	_, err := os.Stat(path)
 	if errors.Is(err, os.ErrNotExist) {
-		cfg := &Config{ChangeSpec: DefaultChangeSpec}
+		cfg := &Config{ChangeSpec: DefaultChangeSpec, Outputs: DefaultOutputGroup}
 		return cfg, nil
 	}
 

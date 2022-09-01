@@ -80,6 +80,8 @@ func TestReadConfig_ErrNotExists(t *testing.T) {
 		t.Fatalf(`ReadConfig("%s") = (%v, %v), expected error to be <nil>, got %v`, p, cfg, err, err)
 	case len(cfg.ChangeSpec) != len(DefaultChangeSpec):
 		t.Fatalf(`ReadConfig("%s) = (%v, %v), expected change spec to be the default change spec`, p, cfg, err)
+	case len(cfg.Outputs) != len(DefaultOutputGroup):
+		t.Fatalf(`ReadConfig("%s) = (%v, %v), expected outputs to be the default output group`, p, cfg, err)
 	}
 }
 
