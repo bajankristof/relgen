@@ -25,7 +25,7 @@ var (
 
 func NewConventionalCommit(commit *object.Commit) (*ConventionalCommit, error) {
 	cc := &ConventionalCommit{Commit: commit, Footers: map[string]string{}}
-	chunks := strings.Split(commit.Message, "\n")
+	chunks := strings.Split(strings.TrimRight(commit.Message, "\n"), "\n")
 	if !cc.parseMessage(chunks[0]) {
 		return nil, errors.New("commit is not conventional")
 	}

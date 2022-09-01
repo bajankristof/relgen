@@ -12,7 +12,9 @@ dolor sit amet
 
 My-Funky-Footer #ok
 BREAKING CHANGE: it kinda broke
-wHy-nOt: true`}
+wHy-nOt: true
+
+`}
 
 	cc, err := NewConventionalCommit(commit)
 	switch true {
