@@ -1,32 +1,29 @@
 package internal
 
 import (
-	"encoding/json"
 	"github.com/bajankristof/relgen/internal/conventionalcommits"
 	"github.com/bajankristof/relgen/internal/semver"
+	"time"
 )
 
 type Release struct {
 	bump      string
-	closed    bool
-	version   *semver.Version
-	changelog Changelog
+	Version   *semver.Version `json:"version"`
+	Changelog Changelog       `json:"changelog"`
+	Date      time.Time       `json:"date"`
 }
 
 func NewRelease(version *semver.Version) *Release {
 	return &Release{
 		bump:      semver.NONE,
-		version:   semver.SelectLatest(semver.NewEmptyVersion(), version),
-		changelog: Changelog{},
+		Version:   semver.SelectLatest(semver.NewEmptyVersion(), version),
+		Changelog: Changelog{},
+		Date:      time.Now(),
 	}
 }
 
 func (rel *Release) Push(cc *conventionalcommits.ConventionalCommit, spec *ChangeSpec) *Release {
-	if rel.closed {
-		return rel
-	}
-
-	rel.changelog[spec.Category] = append(rel.changelog[spec.Category], cc)
+	rel.Changelog[spec.Category] = append(rel.Changelog[spec.Category], cc)
 
 	if cc.IsBreakingChange() {
 		rel.bump = semver.MAJOR
@@ -38,23 +35,9 @@ func (rel *Release) Push(cc *conventionalcommits.ConventionalCommit, spec *Chang
 }
 
 func (rel *Release) Close(tag string, metadata string) *Release {
-	if rel.closed {
-		return rel
-	}
-
-	rel.version.BumpWithSpec(rel.bump)
-	rel.version.WithPreReleaseTag(tag)
-	rel.version.Metadata = metadata
-	rel.closed = true
+	rel.Version.BumpWithSpec(rel.bump)
+	rel.Version.WithPreReleaseTag(tag)
+	rel.Version.Metadata = metadata
+	rel.bump = semver.NONE
 	return rel
-}
-
-func (rel *Release) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		Version   *semver.Version `json:"version"`
-		Changelog Changelog       `json:"changelog"`
-	}{
-		Version:   rel.version,
-		Changelog: rel.changelog,
-	})
 }

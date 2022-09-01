@@ -111,13 +111,13 @@ func TestReleaseBuilder_BuildSince(t *testing.T) {
 	switch true {
 	case err != nil:
 		t.Fatalf("(*ReleaseBuilder(%v)).BuildSince(nil) = (%v, %v), expected error to be <nil>, got %v", builder, rel, err, err)
-	case rel.version.String() != "0.1.0-test+foo":
-		t.Fatalf("(*ReleaseBuilder(%v)).BuildSince(nil) = (%v, %v), expected release version to be 0.1.0-test+foo, got %v", builder, rel, err, rel.version)
-	case len(rel.changelog[category]) != 1:
-		t.Fatalf("(*ReleaseBuilder(%v)).BuildSince(nil) = (%v, %v), expected release changelog length to be 1, got %d", builder, rel, err, len(rel.changelog[category]))
-	case rel.changelog[category][0].Commit != repo.LogReturn.Commits[1]:
+	case rel.Version.String() != "0.1.0-test+foo":
+		t.Fatalf("(*ReleaseBuilder(%v)).BuildSince(nil) = (%v, %v), expected release version to be 0.1.0-test+foo, got %v", builder, rel, err, rel.Version)
+	case len(rel.Changelog[category]) != 1:
+		t.Fatalf("(*ReleaseBuilder(%v)).BuildSince(nil) = (%v, %v), expected release changelog length to be 1, got %d", builder, rel, err, len(rel.Changelog[category]))
+	case rel.Changelog[category][0].Commit != repo.LogReturn.Commits[1]:
 		expect := repo.LogReturn.Commits[1]
-		got := rel.changelog[category][0].Commit
+		got := rel.Changelog[category][0].Commit
 		t.Fatalf("(*ReleaseBuilder(%v)).BuildSince(nil) = (%v, %v), expected release changelog to contain %v, got %v", builder, rel, err, expect, got)
 	}
 }

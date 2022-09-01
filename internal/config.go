@@ -17,11 +17,11 @@ var DefaultChangeSpec = []ChangeSpec{
 }
 
 type Config struct {
-	OutDir        string       `json:"outDir"`
-	PreRelease    string       `json:"preRelease"`
-	BuildMetadata string       `json:"buildMetadata"`
-	VersionPrefix bool         `json:"versionPrefix"`
-	ChangeSpec    []ChangeSpec `json:"changeSpec"`
+	PreRelease    string            `json:"preRelease"`
+	BuildMetadata string            `json:"buildMetadata"`
+	VersionPrefix bool              `json:"versionPrefix"`
+	ChangeSpec    []ChangeSpec      `json:"changeSpec"`
+	Outputs       OutputWriterGroup `json:"outputs"`
 }
 
 type ChangeSpec struct {
@@ -61,6 +61,10 @@ func ReadConfig(path string) (*Config, error) {
 }
 
 func (cfg *Config) Check() error {
+	if len(cfg.Outputs) < 1 {
+		cfg.Outputs = DefaultOutputGroup
+	}
+
 	if len(cfg.ChangeSpec) < 1 {
 		cfg.ChangeSpec = DefaultChangeSpec
 		return nil

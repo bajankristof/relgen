@@ -93,10 +93,14 @@ func Start() error {
 				return err
 			}
 
+			if len(rel.Changelog) < 1 {
+				return nil
+			}
+
 			output, _ := json.Marshal(rel)
 			fmt.Println(string(output))
 
-			return nil
+			return cfg.Outputs.Execute(rel)
 		},
 	}
 

@@ -24,3 +24,7 @@ go.work
 .DS_Store
 .idea
 /relgen
+/changelog-entry.md
+/changelog-entry.tpl.md
+/version.txt
+/relgenrc.json
