@@ -2,6 +2,7 @@ package conventionalcommits
 
 import (
 	"errors"
+	"github.com/bajankristof/relgen/internal/utils"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"regexp"
 	"strings"
@@ -23,10 +24,41 @@ var (
 )
 
 func NewConventionalCommit(commit *object.Commit) (*ConventionalCommit, error) {
-	cc := &ConventionalCommit{Commit: commit}
+	cc := &ConventionalCommit{Commit: commit, Footers: map[string]string{}}
+	chunks := strings.Split(commit.Message, "\n")
+	if !cc.parseMessage(chunks[0]) {
+		return nil, errors.New("commit is not conventional")
+	}
 
-	lines := strings.Split(commit.Message, "\n")
-	ok := matchNamedGroups(lines[0], MessageRegex, func(group string, match string) {
+	cc.parseBodyAndFooters(chunks[1:])
+	return cc, nil
+}
+
+func (cc *ConventionalCommit) AddFooter(key string, value string) {
+	if key != "BREAKING CHANGE" && key != "BREAKING-CHANGE" {
+		key = strings.ToLower(key)
+	}
+
+	cc.Footers[key] = value
+}
+
+func (cc *ConventionalCommit) HasFooter(key string) bool {
+	_, ok := cc.Footers[key]
+	return ok
+}
+
+func (cc *ConventionalCommit) IsBreakingChange() bool {
+	if cc.Exclamation {
+		return true
+	}
+
+	return cc.HasFooter("BREAKING CHANGE") ||
+		cc.HasFooter("BREAKING-CHANGE")
+}
+
+func (cc *ConventionalCommit) parseMessage(message string) bool {
+	iter := &utils.NamedRegexpGroupIter{Regexp: MessageRegex}
+	return iter.ForEach(message, func(group string, match string) {
 		switch group {
 		case "type":
 			cc.Type = match
@@ -38,74 +70,26 @@ func NewConventionalCommit(commit *object.Commit) (*ConventionalCommit, error) {
 			cc.Description = match
 		}
 	})
+}
 
-	if !ok {
-		return nil, errors.New("commit is not conventional")
-	}
-
-	lines = lines[1:]
-	for i := len(lines) - 1; i >= 0; i-- {
+func (cc *ConventionalCommit) parseBodyAndFooters(chunks []string) {
+	iter := &utils.NamedRegexpGroupIter{Regexp: FooterRegex}
+	for i := len(chunks) - 1; i >= 0; i-- {
 		var key, value string
-		ok := matchNamedGroups(lines[i], FooterRegex, func(group string, match string) {
+		if !iter.ForEach(chunks[i], func(group string, match string) {
 			switch group {
 			case "key":
 				key = match
 			case "value":
 				value = match
 			}
-		})
-
-		if !ok {
+		}) {
 			break
 		}
 
-		if key != "BREAKING CHANGE" && key != "BREAKING-CHANGE" {
-			key = strings.ToLower(key)
-		}
-
-		if cc.Footers == nil {
-			cc.Footers = map[string]string{}
-		}
-
-		cc.Footers[key] = value
-		lines = lines[:i]
+		cc.AddFooter(key, value)
+		chunks = chunks[:i]
 	}
 
-	cc.Body = strings.TrimSpace(strings.Join(lines, "\n"))
-	return cc, nil
-}
-
-func (cc *ConventionalCommit) IsBreakingChange() bool {
-	if cc.Exclamation {
-		return true
-	}
-
-	if cc.Footers == nil {
-		return false
-	}
-
-	_, ok := cc.Footers["BREAKING CHANGE"]
-	if ok {
-		return true
-	}
-
-	_, ok = cc.Footers["BREAKING-CHANGE"]
-	return ok
-}
-
-func matchNamedGroups(subject string, regex *regexp.Regexp, callback func(group string, match string)) bool {
-	match := regex.FindStringSubmatch(subject)
-	if len(match) < 1 {
-		return false
-	}
-
-	for i, group := range regex.SubexpNames() {
-		if i == 0 || group == "" {
-			continue
-		}
-
-		callback(group, match[i])
-	}
-
-	return true
+	cc.Body = strings.TrimSpace(strings.Join(chunks, "\n"))
 }

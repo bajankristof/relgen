@@ -50,6 +50,10 @@ func (builder *ReleaseBuilder) BuildSince(version *semver.Version) (*Release, er
 			return nil
 		}
 
+		if cc.HasFooter("relgen-off") {
+			return nil
+		}
+
 		_, spec := builder.Config.FindChangeSpec(cc)
 		if spec == nil {
 			return nil
