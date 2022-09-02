@@ -51,6 +51,38 @@ func TestOutputWriter_UnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestOutputWriter_UnmarshalJSON_WithType(t *testing.T) {
+	p := path.Join(t.TempDir(), "test.txt")
+	writer := &OutputWriter{}
+	data := fmt.Sprintf(`{"path":"%s","type":"version.txt"}`, p)
+	err := writer.UnmarshalJSON([]byte(data))
+	switch true {
+	case err != nil:
+		t.Fatalf(`(*OutputWriter(%v)).Execute(%v), expected error to be <nil>, got %v`, writer, data, err)
+	case writer.Path != p:
+		t.Fatalf(`(*OutputWriter(%v)).Execute(%v), expected path to be "%s", got "%s"`, writer, data, p, writer.Path)
+	case writer.Template != DefaultVersionOutput.Template:
+		expect := DefaultVersionOutput.Template
+		got := writer.Template
+		t.Fatalf(`(*OutputWriter(%v)).Execute(%v), expected template to be %v, got %v"`, writer, data, expect, got)
+	}
+
+	p = path.Join(t.TempDir(), "test.md")
+	writer = &OutputWriter{}
+	data = fmt.Sprintf(`{"path":"%s","type":"changelog-entry.md"}`, p)
+	err = writer.UnmarshalJSON([]byte(data))
+	switch true {
+	case err != nil:
+		t.Fatalf(`(*OutputWriter(%v)).Execute(%v), expected error to be <nil>, got %v`, writer, data, err)
+	case writer.Path != p:
+		t.Fatalf(`(*OutputWriter(%v)).Execute(%v), expected path to be "%s", got "%s"`, writer, data, p, writer.Path)
+	case writer.Template != DefaultChangelogOutput.Template:
+		expect := DefaultChangelogOutput.Template
+		got := writer.Template
+		t.Fatalf(`(*OutputWriter(%v)).Execute(%v), expected template to be %v, got %v"`, writer, data, expect, got)
+	}
+}
+
 func TestOutputWriterGroup_Execute(t *testing.T) {
 	group := OutputWriterGroup{
 		&OutputWriter{

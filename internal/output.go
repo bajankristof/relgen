@@ -63,6 +63,7 @@ func (writer *OutputWriter) Execute(rel *Release) error {
 func (writer *OutputWriter) UnmarshalJSON(data []byte) error {
 	tmp := &struct {
 		Path     string `json:"path"`
+		Type     string `json:"type"`
 		Template string `json:"template"`
 	}{}
 
@@ -72,7 +73,14 @@ func (writer *OutputWriter) UnmarshalJSON(data []byte) error {
 	}
 
 	writer.Path = tmp.Path
-	writer.Template, err = template.ParseFiles(tmp.Template)
+	switch tmp.Type {
+	case "version.txt":
+		writer.Template = DefaultVersionOutput.Template
+	case "changelog-entry.md":
+		writer.Template = DefaultChangelogOutput.Template
+	default:
+		writer.Template, err = template.ParseFiles(tmp.Template)
+	}
 
 	return err
 }
