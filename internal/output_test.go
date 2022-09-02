@@ -11,7 +11,7 @@ import (
 
 func TestOutputWriter_Execute(t *testing.T) {
 	writer := &OutputWriter{
-		Path:     path.Join(t.TempDir(), "test.txt"),
+		Path:     path.Join(t.TempDir(), "foo/bar/test.txt"),
 		Template: template.Must(template.New("test.txt").Parse(`Version: {{.Version | print}}`)),
 	}
 

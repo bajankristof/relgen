@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"golang.org/x/sync/errgroup"
 	"os"
+	"path/filepath"
 	"text/template"
 )
 
@@ -46,6 +47,12 @@ func (group OutputWriterGroup) Execute(rel *Release) error {
 }
 
 func (writer *OutputWriter) Execute(rel *Release) error {
+	dir := filepath.Dir(writer.Path)
+	err := os.MkdirAll(dir, 0777)
+	if err != nil {
+		return err
+	}
+
 	file, err := os.Create(writer.Path)
 	if err != nil {
 		return err
