@@ -121,7 +121,7 @@ func TestChangeSpec_Check(t *testing.T) {
 		t.Fatalf(`(*ChangeSpec(%v)).Check(), expected error to be <nil>, got %v`, spec, err)
 	}
 
-	spec = &ChangeSpec{Bump: "NARLY"}
+	spec = &ChangeSpec{Bump: "GNARLY"}
 	if err := spec.Check(); err == nil {
 		t.Fatalf(`(*ChangeSpec(%v)).Check(), expected error NOT to be <nil>`, spec)
 	}
