@@ -28,3 +28,4 @@ go.work
 /changelog-entry.tpl.md
 /version.txt
 /relgenrc.json
+/bin
