@@ -13,7 +13,7 @@ import (
 var DefaultChangeSpec = []ChangeSpec{
 	{&TypeSpec{regexp.MustCompile("^feat$")}, semver.MINOR, "Features"},
 	{&TypeSpec{regexp.MustCompile("^fix$")}, semver.PATCH, "Fixes"},
-	{&TypeSpec{regexp.MustCompile("^build|chore|ci|docs|style|refactor|perf|test$")}, "NONE", "Other"},
+	{&TypeSpec{regexp.MustCompile("^build|chore|ci|docs|style|refactor|perf|test$")}, semver.PATCH, "Other"},
 }
 
 type Config struct {
